@@ -34,7 +34,11 @@ parser_error_t _readCompactu32(parser_context_t* c, pd_Compactu32_t* v);
 parser_error_t _readCompactu64(parser_context_t* c, pd_Compactu64_t* v);
 parser_error_t _readCallImpl(parser_context_t* c, pd_Call_t* v, pd_MethodNested_t* m);
 
+parser_error_t _readAccountId(parser_context_t* c, pd_AccountId_t* v);
 parser_error_t _readBytes(parser_context_t* c, pd_Bytes_t* v);
+parser_error_t _readChargeAssetIdOf(parser_context_t* c, pd_ChargeAssetIdOf_t* v);
+parser_error_t _readCompactAccountIndex(parser_context_t* c, pd_CompactAccountIndex_t* v);
+parser_error_t _readAccountIdLookupOfT(parser_context_t* c, pd_AccountIdLookupOfT_t* v);
 parser_error_t _readCall(parser_context_t* c, pd_Call_t* v);
 parser_error_t _readBalance(parser_context_t* c, pd_Balance_t* v);
 parser_error_t _readHash(parser_context_t* c, pd_Hash_t* v);
@@ -98,8 +102,36 @@ parser_error_t _toStringCompactu64(
     uint8_t pageIdx,
     uint8_t* pageCount);
 
+parser_error_t _toStringAccountId(
+    const pd_AccountId_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount);
+
 parser_error_t _toStringBytes(
     const pd_Bytes_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount);
+
+parser_error_t _toStringChargeAssetIdOf(
+    const pd_ChargeAssetIdOf_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount);
+
+parser_error_t _toStringCompactAccountIndex(
+    const pd_CompactAccountIndex_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount);
+
+parser_error_t _toStringAccountIdLookupOfT(
+    const pd_AccountIdLookupOfT_t* v,
     char* outValue,
     uint16_t outValueLen,
     uint8_t pageIdx,

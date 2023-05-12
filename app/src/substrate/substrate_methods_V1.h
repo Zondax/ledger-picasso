@@ -13,11 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ********************************************************************************/
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wextern-c-compat"
 #pragma once
 
 #ifdef __cplusplus
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wextern-c-compat"
+
 extern "C" {
 #endif
 
@@ -33,7 +34,7 @@ extern "C" {
 
 #define PD_CALL_BALANCES_TRANSFER_ALL_V1 4
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t dest;
+    pd_AccountIdLookupOfT_t dest;
     pd_bool_t keep_alive;
 } pd_balances_transfer_all_V1_t;
 
@@ -43,7 +44,7 @@ typedef struct {
 
 #define PD_CALL_BALANCES_FORCE_UNRESERVE_V1 5
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t who;
+    pd_AccountIdLookupOfT_t who;
     pd_Balance_t amount;
 } pd_balances_force_unreserve_V1_t;
 
@@ -60,20 +61,20 @@ typedef union {
 
 #define PD_CALL_BALANCES_TRANSFER_V1 0
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t dest;
+    pd_AccountIdLookupOfT_t dest;
     pd_CompactBalance_t amount;
 } pd_balances_transfer_V1_t;
 
 #define PD_CALL_BALANCES_FORCE_TRANSFER_V1 2
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t source;
-    pd_LookupasStaticLookupSource_V1_t dest;
+    pd_AccountIdLookupOfT_t source;
+    pd_AccountIdLookupOfT_t dest;
     pd_CompactBalance_t amount;
 } pd_balances_force_transfer_V1_t;
 
 #define PD_CALL_BALANCES_TRANSFER_KEEP_ALIVE_V1 3
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t dest;
+    pd_AccountIdLookupOfT_t dest;
     pd_CompactBalance_t amount;
 } pd_balances_transfer_keep_alive_V1_t;
 
@@ -82,7 +83,7 @@ typedef struct {
 #endif
 #define PD_CALL_BALANCES_SET_BALANCE_V1 1
 typedef struct {
-    pd_LookupasStaticLookupSource_V1_t who;
+    pd_AccountIdLookupOfT_t who;
     pd_CompactBalance_t new_free;
     pd_CompactBalance_t new_reserved;
 } pd_balances_set_balance_V1_t;
@@ -107,6 +108,5 @@ typedef union {
 
 #ifdef __cplusplus
 }
-#endif
-
 #pragma clang diagnostic pop
+#endif

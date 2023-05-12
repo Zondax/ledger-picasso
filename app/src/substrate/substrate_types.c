@@ -17,8 +17,9 @@
 #include "bignum.h"
 #include "coin.h"
 #include "parser_impl.h"
-
 #include "substrate_dispatch.h"
+#include "substrate_strings.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <zxformat.h>
@@ -108,6 +109,10 @@ parser_error_t _readCallImpl(parser_context_t* c, pd_Call_t* v, pd_MethodNested_
 ///////////////////////////////////
 ///////////////////////////////////
 
+parser_error_t _readAccountId(parser_context_t* c, pd_AccountId_t* v) {
+    GEN_DEF_READARRAY(32)
+}
+
 parser_error_t _readBytes(parser_context_t* c, pd_Bytes_t* v)
 {
     CHECK_INPUT()
@@ -118,6 +123,45 @@ parser_error_t _readBytes(parser_context_t* c, pd_Bytes_t* v)
 
     v->_ptr = c->buffer + c->offset;
     CTX_CHECK_AND_ADVANCE(c, v->_len);
+    return parser_ok;
+}
+
+parser_error_t _readChargeAssetIdOf(parser_context_t* c, pd_ChargeAssetIdOf_t* v)
+{
+    CHECK_INPUT()
+    CHECK_ERROR(_readUInt32(c, &v->value))
+    return parser_ok;
+}
+
+parser_error_t _readCompactAccountIndex(parser_context_t* c, pd_CompactAccountIndex_t* v)
+{
+    return _readCompactInt(c, &v->value);
+}
+
+parser_error_t _readAccountIdLookupOfT(parser_context_t* c, pd_AccountIdLookupOfT_t* v)
+{
+    CHECK_INPUT()
+    CHECK_ERROR(_readUInt8(c, &v->value))
+    switch (v->value) {
+    case 0: // Id
+        CHECK_ERROR(_readAccountId(c, &v->id))
+        break;
+    case 1: // Index
+        CHECK_ERROR(_readCompactAccountIndex(c, &v->index))
+        break;
+    case 2: // Raw
+        CHECK_ERROR(_readBytes(c, &v->raw))
+        break;
+    case 3: // Address32
+        GEN_DEF_READARRAY(32)
+        break;
+    case 4: // Address20
+        GEN_DEF_READARRAY(20)
+        break;
+    default:
+        return parser_unexpected_value;
+    }
+
     return parser_ok;
 }
 
@@ -150,10 +194,9 @@ parser_error_t _readHash(parser_context_t* c, pd_Hash_t* v) {
 
 parser_error_t _readOptionChargeAssetIdOf(parser_context_t* c, pd_OptionChargeAssetIdOf_t* v)
 {
-    CHECK_INPUT()
     CHECK_ERROR(_readUInt8(c, &v->some))
     if (v->some > 0) {
-        CHECK_ERROR(_readu32(c, &v->value))
+        CHECK_ERROR(_readChargeAssetIdOf(c, &v->contained))
     }
     return parser_ok;
 }
@@ -170,6 +213,7 @@ parser_error_t _toStringbool(
     uint8_t* pageCount)
 {
     CLEAN_AND_CHECK()
+    UNUSED(pageIdx);
 
     *pageCount = 1;
     switch (*v) {
@@ -278,6 +322,16 @@ parser_error_t _toStringCompactu64(
 ///////////////////////////////////
 ///////////////////////////////////
 
+parser_error_t _toStringAccountId(
+    const pd_AccountId_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount)
+{
+    return _toStringPubkeyAsAddress(v->_ptr, outValue, outValueLen, pageIdx, pageCount);
+}
+
 parser_error_t _toStringBytes(
     const pd_Bytes_t* v,
     char* outValue,
@@ -286,6 +340,59 @@ parser_error_t _toStringBytes(
     uint8_t* pageCount)
 {
     GEN_DEF_TOSTRING_ARRAY(v->_len);
+}
+
+parser_error_t _toStringChargeAssetIdOf(
+    const pd_ChargeAssetIdOf_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount)
+{
+    return _toStringu32(&v->value, outValue, outValueLen, pageIdx, pageCount);
+}
+
+parser_error_t _toStringCompactAccountIndex(
+    const pd_CompactAccountIndex_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount)
+{
+    return _toStringCompactInt(&v->value, 0, false, "", "", outValue, outValueLen, pageIdx, pageCount);
+}
+
+parser_error_t _toStringAccountIdLookupOfT(
+    const pd_AccountIdLookupOfT_t* v,
+    char* outValue,
+    uint16_t outValueLen,
+    uint8_t pageIdx,
+    uint8_t* pageCount)
+{
+    CLEAN_AND_CHECK()
+    switch (v->value) {
+    case 0: // Id
+        CHECK_ERROR(_toStringAccountId(&v->id, outValue, outValueLen, pageIdx, pageCount))
+        break;
+    case 1: // Index
+        CHECK_ERROR(_toStringCompactAccountIndex(&v->index, outValue, outValueLen, pageIdx, pageCount))
+        break;
+    case 2: // Raw
+        CHECK_ERROR(_toStringBytes(&v->raw, outValue, outValueLen, pageIdx, pageCount))
+        break;
+    case 3: // Address32
+    {
+        GEN_DEF_TOSTRING_ARRAY(32)
+    }
+    case 4: // Address20
+    {
+        GEN_DEF_TOSTRING_ARRAY(20)
+    }
+    default:
+        return parser_not_supported;
+    }
+
+    return parser_ok;
 }
 
 parser_error_t _toStringCall(
@@ -424,11 +531,14 @@ parser_error_t _toStringOptionChargeAssetIdOf(
     CLEAN_AND_CHECK()
 
     *pageCount = 1;
-    if (v->some == 0) {
-        snprintf(outValue, outValueLen, "0");
-        return parser_ok;
+    if (v->some > 0) {
+        CHECK_ERROR(_toStringChargeAssetIdOf(
+            &v->contained,
+            outValue, outValueLen,
+            pageIdx, pageCount));
+    } else {
+        snprintf(outValue, outValueLen, "None");
     }
-    CHECK_ERROR(_toStringu32(&v->value, outValue, outValueLen, pageIdx, pageCount));
     return parser_ok;
 }
 
