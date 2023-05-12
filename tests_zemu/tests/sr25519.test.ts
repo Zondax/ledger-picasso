@@ -29,8 +29,11 @@ const APP_PATH = Resolve('../app/output/app_sr25519.elf')
 
 jest.setTimeout(180000)
 
+const expected_address = '5tz55XYF63PYUs8N7axTwzEk99QbDEvPPdkFP5smfedAtnmM'
+const expected_pk = '121cc87d316d311fe3e3b9c34b1083a29c55f6ebd214b60f59578b0a37007424'
+
 describe('SR25519', function () {
-  test('get address sr25519', async function () {
+  test.concurrent('get address sr25519', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions })
@@ -43,9 +46,6 @@ describe('SR25519', function () {
       expect(resp.return_code).toEqual(0x9000)
       expect(resp.error_message).toEqual('No errors')
 
-      const expected_address = '5tz55XYF63PYUs8N7axTwzEk99QbDEvPPdkFP5smfedAtnmM'
-      const expected_pk = '121cc87d316d311fe3e3b9c34b1083a29c55f6ebd214b60f59578b0a37007424'
-
       expect(resp.address).toEqual(expected_address)
       expect(resp.pubKey).toEqual(expected_pk)
     } finally {
@@ -53,7 +53,7 @@ describe('SR25519', function () {
     }
   })
 
-  test('show address sr25519', async function () {
+  test.concurrent('show address sr25519', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions, model: 'nanos' })
@@ -70,9 +70,6 @@ describe('SR25519', function () {
       expect(resp.return_code).toEqual(0x9000)
       expect(resp.error_message).toEqual('No errors')
 
-      const expected_address = '5tz55XYF63PYUs8N7axTwzEk99QbDEvPPdkFP5smfedAtnmM'
-      const expected_pk = '121cc87d316d311fe3e3b9c34b1083a29c55f6ebd214b60f59578b0a37007424'
-
       expect(resp.address).toEqual(expected_address)
       expect(resp.pubKey).toEqual(expected_pk)
     } finally {
@@ -80,7 +77,7 @@ describe('SR25519', function () {
     }
   })
 
-  test('show address - reject sr25519', async function () {
+  test.concurrent('show address - reject sr25519', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions })
@@ -101,7 +98,7 @@ describe('SR25519', function () {
     }
   })
 
-  test('sign basic normal', async function () {
+  test.concurrent('sign basic normal', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions })
@@ -135,14 +132,14 @@ describe('SR25519', function () {
         prehash = Buffer.from(blake2bFinal(context))
       }
       const signingcontext = Buffer.from([])
-      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.slice(1))
+      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.subarray(1))
       expect(valid).toEqual(true)
     } finally {
       await sim.close()
     }
   })
 
-  test('sign basic expert', async function () {
+  test.concurrent('sign basic expert', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions })
@@ -182,14 +179,14 @@ describe('SR25519', function () {
         prehash = Buffer.from(blake2bFinal(context))
       }
       const signingcontext = Buffer.from([])
-      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.slice(1))
+      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.subarray(1))
       expect(valid).toEqual(true)
     } finally {
       await sim.close()
     }
   })
 
-  test('sign basic expert - accept shortcut', async function () {
+  test.concurrent('sign basic expert - accept shortcut', async function () {
     const sim = new Zemu(APP_PATH)
     try {
       await sim.start({ ...defaultOptions })
@@ -234,7 +231,7 @@ describe('SR25519', function () {
         prehash = Buffer.from(blake2bFinal(context))
       }
       const signingcontext = Buffer.from([])
-      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.slice(1))
+      const valid = addon.schnorrkel_verify(pubKey, signingcontext, prehash, signatureResponse.signature.subarray(1))
       expect(valid).toEqual(true)
     } finally {
       await sim.close()
