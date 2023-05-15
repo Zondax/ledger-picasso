@@ -23,26 +23,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
-// Based
-// https://github.com/paritytech/substrate/blob/master/node/primitives/src/lib.rs
-
-typedef struct {
-    const uint8_t* _ptr;
-} pd_AccountId_V1_t;
-
-typedef struct {
-    compactInt_t value;
-} pd_CompactAccountIndex_V1_t;
-
-typedef struct {
-    uint8_t value;
-    union {
-        pd_AccountId_V1_t id;
-        pd_CompactAccountIndex_V1_t index;
-        pd_Bytes_t raw;
-        const uint8_t* _ptr;
-    };
-} pd_LookupasStaticLookupSource_V1_t;
+// Versioned types functions for tx version V1
 
 #ifdef __cplusplus
 }

@@ -25,7 +25,7 @@
 __Z_INLINE parser_error_t _readMethod_balances_transfer_V1(
     parser_context_t* c, pd_balances_transfer_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->dest))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->dest))
     CHECK_ERROR(_readCompactBalance(c, &m->amount))
     return parser_ok;
 }
@@ -33,8 +33,8 @@ __Z_INLINE parser_error_t _readMethod_balances_transfer_V1(
 __Z_INLINE parser_error_t _readMethod_balances_force_transfer_V1(
     parser_context_t* c, pd_balances_force_transfer_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->source))
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->dest))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->source))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->dest))
     CHECK_ERROR(_readCompactBalance(c, &m->amount))
     return parser_ok;
 }
@@ -42,7 +42,7 @@ __Z_INLINE parser_error_t _readMethod_balances_force_transfer_V1(
 __Z_INLINE parser_error_t _readMethod_balances_transfer_keep_alive_V1(
     parser_context_t* c, pd_balances_transfer_keep_alive_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->dest))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->dest))
     CHECK_ERROR(_readCompactBalance(c, &m->amount))
     return parser_ok;
 }
@@ -50,7 +50,7 @@ __Z_INLINE parser_error_t _readMethod_balances_transfer_keep_alive_V1(
 __Z_INLINE parser_error_t _readMethod_balances_transfer_all_V1(
     parser_context_t* c, pd_balances_transfer_all_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->dest))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->dest))
     CHECK_ERROR(_readbool(c, &m->keep_alive))
     return parser_ok;
 }
@@ -62,7 +62,7 @@ __Z_INLINE parser_error_t _readMethod_balances_transfer_all_V1(
 __Z_INLINE parser_error_t _readMethod_balances_set_balance_V1(
     parser_context_t* c, pd_balances_set_balance_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->who))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->who))
     CHECK_ERROR(_readCompactBalance(c, &m->new_free))
     CHECK_ERROR(_readCompactBalance(c, &m->new_reserved))
     return parser_ok;
@@ -71,7 +71,7 @@ __Z_INLINE parser_error_t _readMethod_balances_set_balance_V1(
 __Z_INLINE parser_error_t _readMethod_balances_force_unreserve_V1(
     parser_context_t* c, pd_balances_force_unreserve_V1_t* m)
 {
-    CHECK_ERROR(_readLookupasStaticLookupSource_V1(c, &m->who))
+    CHECK_ERROR(_readAccountIdLookupOfT(c, &m->who))
     CHECK_ERROR(_readBalance(c, &m->amount))
     return parser_ok;
 }
@@ -291,7 +291,7 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1536: /* module 6 call 0 */
         switch (itemIdx) {
         case 0: /* balances_transfer_V1 - dest */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->nested.balances_transfer_V1.dest,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -306,12 +306,12 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1538: /* module 6 call 2 */
         switch (itemIdx) {
         case 0: /* balances_force_transfer_V1 - source */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->nested.balances_force_transfer_V1.source,
                 outValue, outValueLen,
                 pageIdx, pageCount);
         case 1: /* balances_force_transfer_V1 - dest */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->nested.balances_force_transfer_V1.dest,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -326,7 +326,7 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1539: /* module 6 call 3 */
         switch (itemIdx) {
         case 0: /* balances_transfer_keep_alive_V1 - dest */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->nested.balances_transfer_keep_alive_V1.dest,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -341,7 +341,7 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1540: /* module 6 call 4 */
         switch (itemIdx) {
         case 0: /* balances_transfer_all_V1 - dest */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->basic.balances_transfer_all_V1.dest,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -359,7 +359,7 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1537: /* module 6 call 1 */
         switch (itemIdx) {
         case 0: /* balances_set_balance_V1 - who */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->nested.balances_set_balance_V1.who,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -379,7 +379,7 @@ parser_error_t _getMethod_ItemValue_V1(
     case 1541: /* module 6 call 5 */
         switch (itemIdx) {
         case 0: /* balances_force_unreserve_V1 - who */;
-            return _toStringLookupasStaticLookupSource_V1(
+            return _toStringAccountIdLookupOfT(
                 &m->basic.balances_force_unreserve_V1.who,
                 outValue, outValueLen,
                 pageIdx, pageCount);
@@ -399,7 +399,7 @@ parser_error_t _getMethod_ItemValue_V1(
     return parser_ok;
 }
 
-bool _getMethod_ItemIsExpert_V1(uint8_t moduleIdx, uint8_t callIdx, uint8_t itemIdx)
+bool _getMethod_ItemIsExpert_V1(uint8_t moduleIdx, uint8_t callIdx, __Z_UNUSED uint8_t itemIdx)
 {
     uint16_t callPrivIdx = ((uint16_t)moduleIdx << 8u) + callIdx;
 

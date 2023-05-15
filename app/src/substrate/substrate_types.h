@@ -23,6 +23,12 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wextern-c-compat"
+#pragma clang diagnostic pop
+#endif
+
 // https://github.com/paritytech/substrate/blob/effe489951d1edab9d34846b1eefdfaf9511dab9/frame/identity/src/lib.rs
 #define Data_e_NONE 0
 #define Data_e_RAW_VECU8 33
@@ -80,41 +86,18 @@ typedef struct {
 // Common types
 ////////////////////////
 
-typedef struct {
-    uint64_t _len;
-    const uint8_t* _ptr;
-} pd_Bytes_t;
-
-typedef struct {
-    pd_CallIndex_t callIndex;
-    const uint32_t* _txVerPtr;
-    pd_NestCallIdx_t nestCallIdx;
-} pd_Call_t;
-
-typedef struct {
-    const uint8_t* _ptr;
-} pd_Balance_t;
-
-typedef struct {
-    const uint8_t* _ptr;
-} pd_Hash_t;
-
-typedef struct {
-    uint8_t some;
-    uint32_t value;
-} pd_OptionChargeAssetIdOf_t;
-
-////////////////////////
-// /Common types
-////////////////////////
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wextern-c-compat"
-#pragma clang diagnostic pop
-
-////////////////////////
-// Types that require out of order declaration
-////////////////////////
+typedef compactInt_t pd_Compactu32_t; // u32
+typedef compactInt_t pd_Compactu64_t; // u64
+typedef compactInt_t pd_CompactAssignments_t;
+typedef compactInt_t pd_CompactBountyIndex_t;
+typedef compactInt_t pd_CompactEraIndex_t;
+typedef compactInt_t pd_CompactMemberCount_t;
+typedef compactInt_t pd_CompactMoment_t;
+typedef compactInt_t pd_CompactPropIndex_t;
+typedef compactInt_t pd_CompactProposalIndex_t;
+typedef compactInt_t pd_CompactReferendumIndex_t;
+typedef compactInt_t pd_CompactRegistrarIndex_t;
+typedef compactInt_t pd_CompactWeight_t;
 
 typedef enum {
     eAddressIndex = 0,
@@ -135,23 +118,51 @@ typedef struct {
     compactInt_t value;
 } pd_CompactBalance_t;
 
-////////////////////////
-////////////////////////
-////////////////////////
-////////////////////////
+typedef struct {
+    const uint8_t* _ptr;
+} pd_AccountId_t;
 
-typedef compactInt_t pd_Compactu32_t; // u32
-typedef compactInt_t pd_Compactu64_t; // u64
-typedef compactInt_t pd_CompactAssignments_t;
-typedef compactInt_t pd_CompactBountyIndex_t;
-typedef compactInt_t pd_CompactEraIndex_t;
-typedef compactInt_t pd_CompactMemberCount_t;
-typedef compactInt_t pd_CompactMoment_t;
-typedef compactInt_t pd_CompactPropIndex_t;
-typedef compactInt_t pd_CompactProposalIndex_t;
-typedef compactInt_t pd_CompactReferendumIndex_t;
-typedef compactInt_t pd_CompactRegistrarIndex_t;
-typedef compactInt_t pd_CompactWeight_t;
+typedef struct {
+    uint64_t _len;
+    const uint8_t* _ptr;
+} pd_Bytes_t;
+
+typedef struct {
+    uint32_t value;
+} pd_ChargeAssetIdOf_t;
+
+typedef struct {
+    compactInt_t value;
+} pd_CompactAccountIndex_t;
+
+typedef struct {
+    uint8_t value;
+    union {
+        pd_AccountId_t id;
+        pd_CompactAccountIndex_t index;
+        pd_Bytes_t raw;
+        const uint8_t* _ptr;
+    };
+} pd_AccountIdLookupOfT_t;
+
+typedef struct {
+    pd_CallIndex_t callIndex;
+    const uint32_t* _txVerPtr;
+    pd_NestCallIdx_t nestCallIdx;
+} pd_Call_t;
+
+typedef struct {
+    const uint8_t* _ptr;
+} pd_Balance_t;
+
+typedef struct {
+    const uint8_t* _ptr;
+} pd_Hash_t;
+
+typedef struct {
+    uint8_t some;
+    pd_ChargeAssetIdOf_t contained;
+} pd_OptionChargeAssetIdOf_t;
 
 #ifdef __cplusplus
 }
